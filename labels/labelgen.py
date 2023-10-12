@@ -1,11 +1,11 @@
 import numpy as np
 import math
 
-def EW(mp, a, b, c):
+def EW(mp, a = 50):
     """
     calculate exponentially decaying weights based on array size of midprices
     """
-    return a + np.exp(np.linspace(0, mp.size(), endpoint=True) * -b) + c
+    return np.exp((-np.log(2) / a) * np.linspace(1, mp.size, mp.size, endpoint = True))
 
 def WSD(mp, w):
     """
@@ -57,6 +57,3 @@ def DTBL(mp, ewmsd, n):
         elif mp[i] < (mp[0] +ewmsd[i-1]):
             return 3
     return 2
-
-
-data = np.zeros(1000) + np.random.randn(1000)    
