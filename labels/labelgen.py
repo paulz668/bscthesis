@@ -3,7 +3,7 @@ import math
 
 def EW(mp, a, b, c):
     """
-    calculate exponentially distributed weights based on array size of midprices
+    calculate exponentially decaying weights based on array size of midprices
     """
     return a + np.exp(np.linspace(0, mp.size(), endpoint=True) * -b) + c
 
