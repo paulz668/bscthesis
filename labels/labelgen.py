@@ -4,7 +4,7 @@ import math
 def ew(mp, a = 34.65620375):
     """
     calculate exponentially decaying weights based on array size of midprices
-    de Prado (2017) suggests defining decay using a span of 100 which is 34.65620375 when 
+    de Prado (2017) suggests defining decay using a span of 100 which is equivalent to 34.65620375 when 
     defining decay in terms of halflife
     """
     return 1 + np.exp((-np.log(2) / a) * np.linspace(1, mp.size, mp.size, endpoint = True))
