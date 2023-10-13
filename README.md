@@ -1,2 +1,2 @@
 # Bachelor Thesis
-Title: Comparison of random forest and gradient boosting for mid-price and bid ask crossover prediction in limit order books
+Title: Comparison of random forest and gradient boosting for mid-price in limit order books
