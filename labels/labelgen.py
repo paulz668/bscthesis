@@ -1,13 +1,15 @@
 import numpy as np
 import math
 
-def EW(mp, a = 50):
+def ew(mp, a = 34.65620375):
     """
     calculate exponentially decaying weights based on array size of midprices
+    de Prado (2017) suggests defining decay using a span of 100 which is 34.65620375 when 
+    defining decay in terms of halflife
     """
-    return np.exp((-np.log(2) / a) * np.linspace(1, mp.size, mp.size, endpoint = True))
+    return 1 + np.exp((-np.log(2) / a) * np.linspace(1, mp.size, mp.size, endpoint = True))
 
-def WSD(mp, w):
+def wsd(mp, w):
     """
     calculate the weighted standard deviation based on an arrray of mid prices mp and an array
     of weights w
@@ -16,36 +18,38 @@ def WSD(mp, w):
     var = np.average((mp-avg)**2, weights=w)
     return math.sqrt(var)
 
-def EWMSD(df, n, span0 = 100):
+def ewmsd(mp, n, a = 34.65620375):
     """
-    calculate exponentially weighted rolling standard deviation with lookback period span0
-    and sampling frequency n 
-    """ 
-    return None
+    calculate exponentially weighted rolling standard deviation with sampling frequency n 
+    """
+    w = ew(mp, a)
+    ewmsd = np.empty(mp.size)
+    for i in range(mp.size):
+        ewmsd[i] = wsd(mp[:i+1][::-n], w[:int(np.ceil((i+1)/n))][::-1])
+    return ewmsd
 
-def STBL(mp, ewmsd, n):
+def stbl(mp, ewmsd):
     """
     label observation at time t based on the static triple barrier method
     mp is an array like container of midprices from time t to t+n
-    ewmsd is the exponentially weighted moving standard deviation at time t for sampling frequency n
-    n is the number of periods the forecast looks into the future 
+    ewmsd is the exponentially weighted moving standard deviation at time t for sampling frequency n 
     1 signifies an up move, 2 a stationary move and 3 a down move
     """
-    for i in range(len(mp)):
+    for i in range(mp.size):
         if i == 0:
             continue
         if mp[i] > (mp[0] + ewmsd):
             return 1
-        elif mp[i] < (mp[0] + ewmsd):
+        elif mp[i] < (mp[0] - ewmsd):
             return 3
     return 2
 
-def DTBL(mp, ewmsd, n):
+def dtbl(mp, ewmsd):
     """
     label observation at time t based on the dynamic triple barrier method
-    mp is an array like container of midprices from time t to t+n
+    mp is an array like container of midprices from time t to t+n (length n+1)
     ewmsd is an array like container of exponentially weighted moving standard deviation at time t
-    for the sampling frequencies from 1 to n
+    for the sampling frequencies from 1 to n (length n)
     n is the number periods the forecast looks into the future
     1 signifies an up move, 2 a stationary move and 3 a down move
     """
@@ -54,6 +58,6 @@ def DTBL(mp, ewmsd, n):
             continue
         if mp[i] > (mp[0] + ewmsd[i-1]):
             return 1
-        elif mp[i] < (mp[0] +ewmsd[i-1]):
+        elif mp[i] < (mp[0] - ewmsd[i-1]):
             return 3
     return 2
