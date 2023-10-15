@@ -20,7 +20,7 @@ def wsd(mpr, w):
 
 def ewmsd(mpr, n, a = 34.65620375):
     """
-    calculate exponentially weighted rolling standard deviation of mpr with sampling frequency n 
+    calculate exponentially weighted moving standard deviation of mpr with sampling frequency n 
     """
     w = ew(mpr, a)
     ewmsd = np.empty(mpr.size)
