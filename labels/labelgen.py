@@ -1,13 +1,15 @@
-import numpy as np
+import pandas as pd
 import math
 
-def pct_change(mp):
+def pct_change(mp, n):
     """
     Percentage Change (per Ntakaris et al. 2018)
-    calculate the percentage of mp.iloc[0] to mp.iloc[mp.size-1] with the method outlined in Benchmark 
+    calculate the percentage of mp.iloc[0] to mp.iloc[n] with the method outlined in Benchmark 
     dataset for mid-price forecasting of limit order book data with machine learning methods
     """
-    return (1/(mp.size-1)*sum(mp.iloc[1:]-mp.iloc[0]))/mp.iloc[0]
+    if n < mp.size:
+        return (1/n*sum(mp.iloc[1:n+1]-mp.iloc[0]))/mp.iloc[0]
+    return 0
 
 def slm(pcmp, t = 0.002):
     """

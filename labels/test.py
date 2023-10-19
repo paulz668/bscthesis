@@ -5,10 +5,13 @@ from labelgen import *
 a = pd.Series([1,2,3,4,5])
 b = a.ewm(span=100).std()
 
+print(pct_change(a, 3))
+
 class TestLabelFunctions(unittest.TestCase):
 
     def testpct_change(self):
-        self.assertEqual(pct_change(a), 2.5)
+        self.assertEqual(pct_change(a, 4), 2.5)
+        self.assertEqual(pct_change(a, 3), 2)
 
     def testslm(self):
         self.assertEqual(slm(0.1), 1)
