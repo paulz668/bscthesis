@@ -1,30 +1,29 @@
 import unittest
-import numpy as np
+import pandas as pd
 from labelgen import *
 
-np.random.seed(123) 
-data = np.zeros(1000) + np.random.randn(1000)
+a = pd.Series([1,2,3,4,5])
+b = a.ewm(span=100).std()
 
 class TestLabelFunctions(unittest.TestCase):
 
-    def testEW(self):
-        self.assertIsNone(np.testing.assert_allclose(ew(data[0:3]), np.array([1.98019802, 1.96078816, 1.94176265])))
+    def testpct_change(self):
+        self.assertEqual(pct_change(a), 2.5)
 
-    def testWSD(self):
-        self.assertAlmostEqual(wsd(data[:3], ew(data[:3])), 0.8666347566309145)
-    
-    def testEWMSD(self):
-        self.assertIsNone(np.testing.assert_allclose(ewmsd(data[0:3], 1), np.array([0., 1.04147539, 0.86663476])))
+    def testslm(self):
+        self.assertEqual(slm(0.1), 1)
+        self.assertEqual(slm(1, 2), 2)
+        self.assertEqual(slm(-0.003), 3)
 
-    def testSTBL(self):
-        self.assertEqual(stbl(data[0:3], wsd(data[0:3], ew(data[0:3]))), 1)
-        self.assertEqual(stbl(data[0:3][::-1], wsd(data[0:3][::-1], ew(data[0:3]))), 3)
-        self.assertEqual(stbl(data[0:3], 10), 2)
+    def teststbml(self):
+        self.assertEqual(stbml(a, b.iloc[1]), 1)
+        self.assertEqual(stbml(a, 10), 2)
+        self.assertEqual(stbml(a.iloc[::-1], b.iloc[1]), 3)
 
-    def testDTBL(self):
-        self.assertEqual(dtbl(data[0:3], np.array([0.86663476, 0.68429625])), 1)
-        self.assertEqual(dtbl(data[0:3][::-1], np.array([0.86663476, 0.68429625])), 3)
-        self.assertEqual(dtbl(data[0:3], np.array([10, 20])), 2)
+    def testdtbml(self):
+        self.assertEqual(dtbml(a, b.iloc[1:]), 1)
+        self.assertEqual(dtbml(a, pd.Series([2,4,6,8])), 2)
+        self.assertEqual(dtbml(a.iloc[::-1], b.iloc[1:]), 3)
 
 if __name__ == '__main__':
     unittest.main()
