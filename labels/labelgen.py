@@ -1,5 +1,5 @@
 import pandas as pd
-import math
+import numpy as np
 
 def pct_change(mp, n):
     """
@@ -8,7 +8,7 @@ def pct_change(mp, n):
     dataset for mid-price forecasting of limit order book data with machine learning methods
     """
     if n < mp.size:
-        return (1/n*sum(mp.iloc[1:n+1]-mp.iloc[0]))/mp.iloc[0]
+        return (1/n*(mp.iloc[1:n+1]-mp.iloc[0]).sum())/mp.iloc[0]
     return 0
 
 def slm(pcmp, t = 0.002):
@@ -38,9 +38,9 @@ def stbml(mp, ewmsd):
     for i in range(mp.size):
         if i == 0:
             continue
-        if mp.iloc[i] > (mp.iloc[0] + ewmsd):
+        if (mp.iloc[i] > (mp.iloc[0] + ewmsd)).iloc[0]:
             return 1
-        elif mp.iloc[i] < (mp.iloc[0] - ewmsd):
+        elif (mp.iloc[i] < (mp.iloc[0] - ewmsd)).iloc[0]:
             return 3
     return 2
 
@@ -57,8 +57,18 @@ def dtbml(mp, ewmsd):
     for i in range(mp.size):
         if i == 0:
             continue
-        if mp.iloc[i] > (mp.iloc[0] + ewmsd.iloc[i-1]):
+        if (mp.iloc[i] > (mp.iloc[0] + ewmsd.iloc[i-1])).iloc[0]:
             return 1
-        elif mp.iloc[i] < (mp.iloc[0] - ewmsd.iloc[i-1]):
+        elif (mp.iloc[i] < (mp.iloc[0] - ewmsd.iloc[i-1])).iloc[0]:
             return 3
     return 2
+
+def convert_numpy_integers(obj):
+    if isinstance(obj, np.int64):
+        return int(obj)
+    elif isinstance(obj, list):
+        return [convert_numpy_integers(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: convert_numpy_integers(value) for key, value in obj.items()}
+    else:
+        return obj
