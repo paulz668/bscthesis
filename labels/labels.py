@@ -4,7 +4,7 @@ import os
 import json
 from labelgen import *
 
-cwd = "C:/Users/paulz/Documents/UNI/BBE/7. Semester/Bachelorarbeit/LOB_DATA/Test" # enter current work directory
+cwd = "C:/Users/paulz/Documents/UNI/BBE/7. Semester/Bachelorarbeit/LOB_DATA/3.NoAuction_DecPre" # enter current work directory
 n = [1,2,3,4,5,6,7,8,9,10] # sampling frequencies
 labels = {
     "slmt1": {'1':[0,0,0],'2':[0,0,0],'3':[0,0,0],'5':[0,0,0],'10':[0,0,0]},  #keep count of labels 1,2,3 using the static labelling method (t=.001) for periods 1,2,3,5,10
@@ -19,14 +19,14 @@ for root, dirs, files in os.walk(cwd):
     for name in files:
         data = np.loadtxt(os.path.join(root, name).replace("\\", "/")) # load data
         df = pd.DataFrame(data[:144, :].T) # df of data without label
-        mp = pd.DataFrame(data[50, :], columns=['Mid-price']) # df of mid-prices
+        mp = pd.DataFrame(data[42, :], columns=['Mid-price']) # df of mid-prices
 
         dlabel = pd.DataFrame(data[144:, :].T, columns=['1_t2', '2_t2', '3_t2', '5_t2', '10_t2']) # df of existing data labels
         for i in range(len(dlabel.columns)): # count label frequencies
             vals = dlabel.iloc[:,i].value_counts()
-            labels["slmt2"][str(sampling_freq[i])][0] = vals[1]
-            labels["slmt2"][str(sampling_freq[i])][1] = vals[2]
-            labels["slmt2"][str(sampling_freq[i])][2] = vals[3]
+            labels["slmt2"][str(sampling_freq[i])][0] += vals[1]
+            labels["slmt2"][str(sampling_freq[i])][1] += vals[2]
+            labels["slmt2"][str(sampling_freq[i])][2] += vals[3]
         print("Default labels counted")
 
         pct = np.empty((mp.size, 5))
@@ -42,14 +42,14 @@ for root, dirs, files in os.walk(cwd):
         t3.columns = ['1_t3', '2_t3', '3_t3', '5__t3', '10_t3']
         for i in range(len(t1.columns)): # count label frequencies
             vals = t1.iloc[:,i].value_counts()
-            labels["slmt1"][str(sampling_freq[i])][0] = vals[1]
-            labels["slmt1"][str(sampling_freq[i])][1] = vals[2]
-            labels["slmt1"][str(sampling_freq[i])][2] = vals[3]
+            labels["slmt1"][str(sampling_freq[i])][0] += vals[1]
+            labels["slmt1"][str(sampling_freq[i])][1] += vals[2]
+            labels["slmt1"][str(sampling_freq[i])][2] += vals[3]
 
             vals = t3.iloc[:,i].value_counts()
-            labels["slmt3"][str(sampling_freq[i])][0] = vals[1]
-            labels["slmt3"][str(sampling_freq[i])][1] = vals[2]
-            labels["slmt3"][str(sampling_freq[i])][2] = vals[3]
+            labels["slmt3"][str(sampling_freq[i])][0] += vals[1]
+            labels["slmt3"][str(sampling_freq[i])][1] += vals[2]
+            labels["slmt3"][str(sampling_freq[i])][2] += vals[3]
         print("t1 and t3 labels counted")
 
         ewmsd = pd.DataFrame()
@@ -85,14 +85,14 @@ for root, dirs, files in os.walk(cwd):
 
         for i in range(len(stbmlabel.columns)): # count label frequencies
             vals = stbmlabel.iloc[:,i].value_counts()
-            labels["stbml"][str(sampling_freq[i])][0] = vals[1]
-            labels["stbml"][str(sampling_freq[i])][1] = vals[2]
-            labels["stbml"][str(sampling_freq[i])][2] = vals[3]
+            labels["stbml"][str(sampling_freq[i])][0] += vals[1]
+            labels["stbml"][str(sampling_freq[i])][1] += vals[2]
+            labels["stbml"][str(sampling_freq[i])][2] += vals[3]
 
             vals = dtbmlabel.iloc[:,i].value_counts()
-            labels["dtbml"][str(sampling_freq[i])][0] = vals[1]
-            labels["dtbml"][str(sampling_freq[i])][1] = vals[2]
-            labels["dtbml"][str(sampling_freq[i])][2] = vals[3]
+            labels["dtbml"][str(sampling_freq[i])][0] += vals[1]
+            labels["dtbml"][str(sampling_freq[i])][1] += vals[2]
+            labels["dtbml"][str(sampling_freq[i])][2] += vals[3]
         print("stbml and dtbml labels counted")   
 
         labeldf = t1.join(dlabel).join(t3).join(stbmlabel).join(dtbmlabel)
