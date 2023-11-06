@@ -3,7 +3,8 @@
 
 #include <vector>
 
-using DataFrame vector<vector<int>>;
+using namespace std;
+using DataFrame = vector<vector<double>>;
 
 class Node{
 
@@ -11,13 +12,11 @@ class Node{
         // default contructor
         Node() = default;
         // root node constructor
-        Node(const DataFrame &df): data(df), parent(nullptr), left(nullptr), 
-                                right(nullptr), entropy(calc_entropy(df)), feature(calc_feature(df)),
-                                value(calc_value(df)) {}
+        Node(DataFrame &df): data(df), parent(nullptr), left(nullptr), 
+                                right(nullptr), entropy(calc_entropy(get_label_frequencies(df))) {}
         // non-root node constructor
-        Node(const DataFrame &df, Node *p, double e): data(df), parent(p), left(nullptr), 
-                                right(nullptr), entropy(e), feature(calc_feature(df)), 
-                                value(calc_value(df)) {}
+        Node(DataFrame &df, Node *p, double e): data(df), parent(p), left(nullptr), 
+                                right(nullptr), entropy(e) {}
 
         // getter methods
         Node *get_parent() { return this->parent; }
@@ -27,8 +26,7 @@ class Node{
         DataFrame &get_data() { return this->data; }
 
         double &get_entropy() { return this->entropy; }
-        int &get_feature() { return this->feature; }
-        double &get_value() { return this->value; }
+        vector<double> &get_best_split() { return this->best_split; }
 
         // setter methods
         void set_parent(Node *p) { this->parent = p; }
@@ -36,8 +34,7 @@ class Node{
         void set_right(Node *r) { this->right = r; }
 
         void set_entropy(double e) { this->entropy = e; }
-        void set_feature(int f) { this->feature = f; }
-        void set_value(double v) { this->value = v;}
+        void set_best_split(vector<double> bS) { this->best_split = bS; }
 
     private:
         Node *parent;
@@ -49,14 +46,13 @@ class Node{
 
         // entropy before split
         double entropy;
-        // feature to split on
-        int feature;
-        // value to split on
-        double value;
+        // feature and value to split on
+        vector<double> best_split = {0,0};
 };
 
-double calc_entropy(DataFrame &);
-int calc_feature(DataFrame &);
-double calc_value(DataFrame &);
+vector<double> get_label_frequencies(const DataFrame &df);
+vector<double> get_label_frequencies(DataFrame::const_iterator beg, DataFrame::const_iterator end);
+double calc_entropy(const vector<double> &freqs);
+vector<double> calc_best_split(Node &);
 
 #endif
