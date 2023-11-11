@@ -1,24 +1,23 @@
-#include <Node.hpp>
-#include <algorithm>
-#include <cmath>
+#include "Node.hpp"
 
 using namespace std;
 
 // calculate the relative label frequencies in the data using a DataFrame reference 
+// this function assumes that the labels are the last column in the dataframe and are 0, 1 or 2
 vector<double> get_label_frequencies(const DataFrame &df)
 {
-    vector<double> res = {0,0,0};
+    vector<double> res = {0.0,0.0,0.0};
     size_t count = df.size();
     for (DataFrame::const_iterator it = df.cbegin(); it != df.cend(); ++it) {
-        if ((*it).back() == 0) {
+        if ((*it).back() == 0.0) {
             res[0] += 1;
-        } else if ((*it).back() == 1) {
+        } else if ((*it).back() == 1.0) {
             res[1] += 1;
         } else {
             res[2] += 1;
         }
     }
-    transform(res.begin(), res.end(), res.begin(), [count](int &c){ return c/count; });
+    transform(res.begin(), res.end(), res.begin(), [count](double &c){ return c/count; });
     return res;
 }
 
@@ -37,7 +36,7 @@ vector<double> get_label_frequencies(DataFrame::const_iterator beg, DataFrame::c
         }
         ++count;
     }
-    transform(res.begin(), res.end(), res.begin(), [count](int &c){ return c/count; });
+    transform(res.begin(), res.end(), res.begin(), [count](double &c){ return c/count; });
     return res;
 }
 

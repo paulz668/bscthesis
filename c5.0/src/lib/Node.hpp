@@ -2,11 +2,17 @@
 #define NODE_HPP
 
 #include <vector>
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
 using DataFrame = vector<vector<double>>;
 
-class Node{
+vector<double> get_label_frequencies(const DataFrame &);
+vector<double> get_label_frequencies(DataFrame::const_iterator, DataFrame::const_iterator);
+double calc_entropy(const vector<double> &);
+
+class Node {
 
     public:
         // default contructor
@@ -50,9 +56,6 @@ class Node{
         vector<double> best_split = {0,0};
 };
 
-vector<double> get_label_frequencies(const DataFrame &df);
-vector<double> get_label_frequencies(DataFrame::const_iterator beg, DataFrame::const_iterator end);
-double calc_entropy(const vector<double> &freqs);
 vector<double> calc_best_split(Node &);
 
 #endif
